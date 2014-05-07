@@ -1,3 +1,4 @@
+#NOTE TO SELF: WRITE MORE TESTS FOR THIS
 class Jewelry
   attr_reader :id
   attr_accessor :type
