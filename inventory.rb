@@ -69,8 +69,18 @@ def show_jewelry(menu_choice)
     type = 0
   end
   jewelries = Jewelry.get_jewelries(type)
-  #todo: somehow go through the tables array and actually format the data
-  puts jewelries
+  header = "                TYPE      MATERIALS COST         LABOR HOURS        ASKING PRICE"
+  puts header
+  total_materials = 0.0
+  total_price = 0.0
+  jewelries.each do |jewelry|
+    total_materials += jewelry.materials_cost
+    total_price += jewelry.cost
+    puts jewelry.format_for_display
+  end
+  puts ""
+  footer = "TOTALS".ljust(19) + "$" + sprintf("%0.02f", total_materials).rjust(20) + "$".rjust(20) + sprintf("%0.02f", total_price).rjust(20)
+  puts footer
 end
 
 def get_menu_selection

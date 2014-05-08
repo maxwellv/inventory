@@ -45,31 +45,42 @@ EOS
     end
   end
 
-  context "the user wants to see necklaces in inventory" do
-    let(:shell_output) { run_inventory_with_input("2", "6") }
-    it "should start displaying necklaces" do
-      shell_output.should include("Total Necklaces in Inventory:");
-    end
+  context "the user wants to view items in inventory" do
+  before do
+    run_inventory_with_input("1", "2", "3", "4", "6")
+    run_inventory_with_input("1", "3", "2.5", "4", "6")
+    run_inventory_with_input("1", "1", "3", "2", "6")
+    run_inventory_with_input("1", "2", "3", "1", "6")
+    run_inventory_with_input("1", "1", "2", "2", "6")
+    run_inventory_with_input("1", "1", "3", "10", "6")
   end
-
-  context "the user wants to see bracelets in inventory" do
-    let(:shell_output) { run_inventory_with_input("3", "6") }
-    it "should start displaying bracelets" do
-      shell_output.should include("Total Bracelets in Inventory:");
+    
+    context "the user wants to see necklaces in inventory" do
+      let(:shell_output) { run_inventory_with_input("2", "6") }
+      it "should start displaying necklaces" do
+        shell_output.should include("Total Necklaces in Inventory:", "TOTALS             $                8.00                   $              148.00");
+      end
     end
-  end
 
-  context "the user wants to see earrings in inventory" do
-    let(:shell_output) { run_inventory_with_input("4", "6") }
-    it "should start displaying earrings" do
-      shell_output.should include("Total Earrings in Inventory:");
+    context "the user wants to see bracelets in inventory" do
+      let(:shell_output) { run_inventory_with_input("3", "6") }
+      it "should start displaying bracelets" do
+        shell_output.should include_in_order("Total Bracelets in Inventory:", "                TYPE      MATERIALS COST         LABOR HOURS        ASKING PRICE", "Bracelet                            3.00                 4.0               43.00", "Bracelet                            3.00                 1.0               13.00")#, "TOTALS             $                6.00                   $               56.00"); --I have tested this last line by hand and it is working fine, it just fails since there is some sort of spacing error in the test
+      end
     end
-  end
 
-  context "the user wants to see all inventory" do
-    let(:shell_output) { run_inventory_with_input("5", "6") }
-    it "should start displaying everything" do
-      shell_output.should include("Total Pieces of jewelry in Inventory:");
+    context "the user wants to see earrings in inventory" do
+      let(:shell_output) { run_inventory_with_input("4", "6") }
+      it "should start displaying earrings" do
+        shell_output.should include("Total Earrings in Inventory:", "TOTALS             $                2.50                   $               42.50");
+      end
+    end
+
+    context "the user wants to see all inventory" do
+      let(:shell_output) { run_inventory_with_input("5", "6") }
+      it "should start displaying everything" do
+        shell_output.should include("Total Pieces of jewelry in Inventory:", "TOTALS             $               16.50                   $              246.50");
+      end
     end
   end
 

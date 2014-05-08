@@ -33,7 +33,7 @@ class Jewelry
     jewelries = Jewelry.execute_and_instantiate(statement)
     return jewelries
   end
-  
+
   def self.execute_and_instantiate(statement, bind_vars = [])
     rows = Environment.database_connection.execute(statement, bind_vars)
     results = []
@@ -47,6 +47,11 @@ class Jewelry
 
   def cost
     return self.materials_cost + (self.hours_worked * 10.0)
+  end
+
+  def format_for_display
+    type_strings = [nil, "Necklace", "Bracelet", "Earrings"] #types are stored one-indexed
+    return type_strings[self.type].ljust(20) + sprintf("%0.02f", self.materials_cost).rjust(20) + self.hours_worked.to_s.rjust(20) + sprintf("%0.02f", self.cost).rjust(20)
   end
 
 end

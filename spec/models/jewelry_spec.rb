@@ -59,4 +59,12 @@ describe Jewelry do
     end
   end
 
+  context "format for display" do
+    let!(:jewelry){ Jewelry.create(1, 2.0, 3.0) }
+    let(:display){ jewelry.format_for_display }
+    it "should look nice for displaying in the executable" do
+      display.should == "Necklace                            2.00                 3.0               32.00"
+    end
+  end
+
 end
