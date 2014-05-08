@@ -29,6 +29,20 @@ EOS
     it "should ask the user to start inputting jewelry" do
       shell_output.should include("Enter the jewelry type (1 for necklaces, 2 for bracelets, or 3 for earrings): ")
     end
+    context "and the input should be validated" do
+    let(:crap_type) { run_inventory_with_input("1", "foo", "2", "2", "2", "6") }
+    let(:crap_materials) { run_inventory_with_input("1", "2", "foo","2", "2", "6") }
+    let(:crap_hours) { run_inventory_with_input("1", "2", "2", "foo", "2", "6") }
+      it "should yell at the user for passing in a bad jewelry type" do
+        crap_type.should include("Invalid type.");
+      end
+      it "should yell at the user for passing in a bad materials cost" do
+        crap_materials.should include("Invalid cost (materials cost must be greater than zero).");
+      end
+      it "should yell at the user for passing in a bad number of hours worked" do
+        crap_hours.should include("Invalid hours (hours worked must be greater than zero).");
+      end
+    end
   end
 
   context "the user wants to see necklaces in inventory" do

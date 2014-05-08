@@ -18,15 +18,13 @@ def run_inventory_with_input(*inputs)
   end
   shell_output
 end
-=begin
+
 RSpec.configure do |config|
   config.after(:each) do
-    Environment.database_connection.execute("DELETE FROM injuries;")
-    Environment.database_connection.execute("DELETE FROM injury_outcomes;")
-    Environment.database_connection.execute("DELETE FROM people;")
+    Environment.database_connection.execute("DELETE FROM jewelries;")
   end
 end
-=end
+
 RSpec::Matchers.define :include_in_order do |*expected|
   match do |actual|
     input = actual.delete("\n")

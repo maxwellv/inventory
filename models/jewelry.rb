@@ -23,5 +23,30 @@ class Jewelry
     return jewelry
   end
 
+  def self.get_jewelries(type)
+    statement = "SELECT * FROM jewelries"
+    if (type == 0) #user wants all jewelries
+      statement += ";"
+    else
+      statement += " WHERE type == #{type};"
+    end
+    jewelries = Jewelry.execute_and_instantiate(statement)
+    return jewelries
+  end
+  
+  def self.execute_and_instantiate(statement, bind_vars = [])
+    rows = Environment.database_connection.execute(statement, bind_vars)
+    results = []
+    rows.each do |row|
+      new_jewelry = Jewelry.new(row["type"], row["materials_cost"], row["hours_worked"])
+      new_jewelry.instance_variable_set(:@id, row["id"])
+      results.push(new_jewelry)
+    end
+    return results
+  end
+
+  def cost
+    return self.materials_cost + (self.hours_worked * 10.0)
+  end
 
 end

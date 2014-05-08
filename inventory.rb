@@ -55,21 +55,22 @@ def add_jewelry
 end
 
 def show_jewelry(menu_choice)
-  #puts "SHOW_JEWELRY GOT CALLED (with choice #{menu_choice})"
   if (menu_choice == 2)
     puts "Total Necklaces in Inventory:"
-    tables = ["necklaces"]
+    type = 1
   elsif (menu_choice == 3)
     puts "Total Bracelets in Inventory:"
-    tables = ["bracelets"]
+    type = 2
   elsif (menu_choice == 4)
     puts "Total Earrings in Inventory:"
-    tables = ["earrings"]
+    type = 3
   elsif (menu_choice == 5)
     puts "Total Pieces of jewelry in Inventory:"
-    tables = ["necklaces", "bracelets", "earrings"]
+    type = 0
   end
-  #todo: go through the tables array and display data
+  jewelries = Jewelry.get_jewelries(type)
+  #todo: somehow go through the tables array and actually format the data
+  puts jewelries
 end
 
 def get_menu_selection
