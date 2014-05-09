@@ -67,4 +67,11 @@ describe Jewelry do
     end
   end
 
+  context "sell" do
+    let!(:jewelry){ Jewelry.create(1, 2.0, 3.0) }
+    it "should sell a piece of jewelry" do
+      jewelry.sell
+      Jewelry.get_jewelries(-1)[0].format_for_display.should == "Necklace                            2.00                 3.0               32.00"
+    end
+  end
 end

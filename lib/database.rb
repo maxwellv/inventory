@@ -12,6 +12,7 @@ class Database < SQLite3::Database
 
   def create_tables
     self.execute("CREATE TABLE jewelries (id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, materials_cost REAL, hours_worked REAL)")
+    self.execute("CREATE TABLE jewelries_sold (id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, materials_cost REAL, hours_worked REAL)")
   end
 
   def execute(statement, bind_vars = [])

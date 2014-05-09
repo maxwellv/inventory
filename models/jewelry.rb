@@ -11,8 +11,12 @@ class Jewelry
     @hours_worked = hours_worked
   end
 
-  def save
-    statement = "INSERT INTO jewelries (type, materials_cost, hours_worked) VALUES (?, ?, ?);"
+  def save(sold = false)
+    table = "jewelries"
+    if (sold)
+      table += "_sold"
+    end
+    statement = "INSERT INTO #{table} (type, materials_cost, hours_worked) VALUES (?, ?, ?);"
     Environment.database_connection.execute(statement, [type, materials_cost, hours_worked])
     @id = Environment.database_connection.execute("SELECT last_insert_rowid();")[0][0]
   end
@@ -27,6 +31,8 @@ class Jewelry
     statement = "SELECT * FROM jewelries"
     if (type == 0) #user wants all jewelries
       statement += ";"
+    elsif (type == -1)
+      statement += "_sold;" #user wants sold jewelries; the lack of a leading space is intentional, as we're selecting from jewelries_sold
     else
       statement += " WHERE type == #{type};"
     end
@@ -52,6 +58,16 @@ class Jewelry
   def format_for_display
     type_strings = [nil, "Necklace", "Bracelet", "Earrings"] #types are stored one-indexed
     return type_strings[self.type].ljust(20) + sprintf("%0.02f", self.materials_cost).rjust(20) + self.hours_worked.to_s.rjust(20) + sprintf("%0.02f", self.cost).rjust(20)
+  end
+
+  def sell
+    #do something
+    #statement = "INSERT INTO jewelries (type, materials_cost, hours_worked) VALUES (?, ?, ?);"
+    #Environment.database_connection.execute(statement, [type, materials_cost, hours_worked])
+    #@id = Environment.database_connection.execute("SELECT last_insert_rowid();")[0][0]
+    statement = "DELETE FROM jewelries WHERE id == #{self.id}"
+    Environment.database_connection.execute(statement)
+    self.save(true)
   end
 
 end
