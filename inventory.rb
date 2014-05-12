@@ -30,18 +30,18 @@ end
 def get_jewelry_type_from_user
   while true
     puts "Enter the jewelry type (1 for necklaces, 2 for bracelets, or 3 for earrings): "
-    type = gets.to_i
-    if (type < 1 || type > 3)
+    jewelry_type = gets.to_i
+    if (jewelry_type < 1 || jewelry_type > 3)
       puts "Invalid type."
     else
-      return type
+      return jewelry_type
     end
   end
 end
 
 def add_jewelry
   #These inputs from the user are nested in loops since I want to provide the user with a chance to not have to redo a bunch of work should he or she make one mistake. If we did validity checking in the jewelry class, we'd have to take all three inputs and make the object before possibly yelling at the user.
-  type = get_jewelry_type_from_user
+  jewelry_type = get_jewelry_type_from_user
   while true
     puts "Enter the materials cost for this piece of jewelry: "
     materials_cost = gets.to_f
@@ -60,8 +60,8 @@ def add_jewelry
       break
     end
   end
-  new_jewelry = Jewelry.create(type, materials_cost, hours_worked)
-  puts "SUCCESS. A jewelry with type #{new_jewelry.type}, materials cost #{new_jewelry.materials_cost}, and hours worked #{new_jewelry.hours_worked} was entered into the database."
+  new_jewelry = Jewelry.create(jewelry_type: jewelry_type, materials_cost: materials_cost, hours_worked: hours_worked)
+  puts "SUCCESS. A jewelry with type #{new_jewelry['jewelry_type']}, materials cost #{new_jewelry['materials_cost']}, and hours worked #{new_jewelry['hours_worked']} was entered into the database."
 end
 
 def show_jewelry(menu_choice)
@@ -96,8 +96,8 @@ def show_jewelry(menu_choice)
 end
 
 def sell_jewelry
-  type = get_jewelry_type_from_user
-  jewelries = Jewelry.get_jewelries(type)
+  jewelry_type = get_jewelry_type_from_user
+  jewelries = Jewelry.get_jewelries(jewelry_type)
   if (jewelries.length == 0)
     puts "There are no jewelries of that type in inventory, so you cannot sell them."
   else

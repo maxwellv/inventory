@@ -21,8 +21,8 @@ end
 
 RSpec.configure do |config|
   config.after(:each) do
-    Environment.database_connection.execute("DELETE FROM jewelries;")
-    Environment.database_connection.execute("DELETE FROM jewelries_sold;")
+    Jewelry.destroy_all
+    Jewelry.connection.execute("DELETE FROM jewelries_sold;")
   end
 end
 

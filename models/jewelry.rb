@@ -1,73 +1,33 @@
-#NOTE TO SELF: WRITE MORE TESTS FOR THIS
-class Jewelry
-  attr_reader :id
-  attr_accessor :type
-  attr_accessor :materials_cost
-  attr_accessor :hours_worked
-
-  def initialize(type, materials_cost, hours_worked)
-    @type = type
-    @materials_cost = materials_cost
-    @hours_worked = hours_worked
-  end
-
-  def save(sold = false)
-    table = "jewelries"
-    if (sold)
-      table += "_sold"
-    end
-    statement = "INSERT INTO #{table} (type, materials_cost, hours_worked) VALUES (?, ?, ?);"
-    Environment.database_connection.execute(statement, [type, materials_cost, hours_worked])
-    @id = Environment.database_connection.execute("SELECT last_insert_rowid();")[0][0]
-  end
-
-  def self.create(type, materials_cost, hours_worked)
-    jewelry = Jewelry.new(type, materials_cost, hours_worked)
-    jewelry.save
-    return jewelry
-  end
-
-  def self.get_jewelries(type)
-    statement = "SELECT * FROM jewelries"
-    if (type == 0) #user wants all jewelries
-      statement += ";"
-    elsif (type == -1)
-      statement += "_sold;" #user wants sold jewelries; the lack of a leading space is intentional, as we're selecting from jewelries_sold
-    else
-      statement += " WHERE type == #{type};"
-    end
-    jewelries = Jewelry.execute_and_instantiate(statement)
-    return jewelries
-  end
-
-  def self.execute_and_instantiate(statement, bind_vars = [])
-    rows = Environment.database_connection.execute(statement, bind_vars)
-    results = []
-    rows.each do |row|
-      new_jewelry = Jewelry.new(row["type"], row["materials_cost"], row["hours_worked"])
-      new_jewelry.instance_variable_set(:@id, row["id"])
-      results.push(new_jewelry)
-    end
-    return results
-  end
+class Jewelry < ActiveRecord::Base
 
   def cost
     return self.materials_cost + (self.hours_worked * 10.0)
   end
 
+  def self.get_jewelries(jewelry_type)
+    if (jewelry_type == 0) #user wants all jewelries
+      return Jewelry.all
+    elsif (jewelry_type == -1)
+      jewelries = Jewelry.connection.execute("SELECT * FROM jewelries_sold;")
+      j2 = []
+      jewelries.each do |j|
+        j = Jewelry.new(jewelry_type: j['jewelry_type'], materials_cost: j['materials_cost'], hours_worked: j['hours_worked'], id:j['id'])
+        j2.push(j)
+      end
+      return j2
+    else
+     return Jewelry.where(jewelry_type: jewelry_type)
+    end
+  end
+
   def format_for_display
     type_strings = [nil, "Necklace", "Bracelet", "Earrings"] #types are stored one-indexed
-    return type_strings[self.type].ljust(20) + sprintf("%0.02f", self.materials_cost).rjust(20) + self.hours_worked.to_s.rjust(20) + sprintf("%0.02f", self.cost).rjust(20)
+    return type_strings[self.jewelry_type].ljust(20) + sprintf("%0.02f", self.materials_cost).rjust(20) + self.hours_worked.to_s.rjust(20) + sprintf("%0.02f", self.cost).rjust(20)
   end
 
   def sell
-    #do something
-    #statement = "INSERT INTO jewelries (type, materials_cost, hours_worked) VALUES (?, ?, ?);"
-    #Environment.database_connection.execute(statement, [type, materials_cost, hours_worked])
-    #@id = Environment.database_connection.execute("SELECT last_insert_rowid();")[0][0]
-    statement = "DELETE FROM jewelries WHERE id == #{self.id}"
-    Environment.database_connection.execute(statement)
-    self.save(true)
+    statement = "INSERT INTO jewelries_sold (jewelry_type, materials_cost, hours_worked, id) VALUES (#{self.jewelry_type}, #{self.materials_cost}, #{self.hours_worked}, #{self.id});"
+    Jewelry.connection.execute(statement)
+    self.destroy
   end
-
 end
